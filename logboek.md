@@ -1,0 +1,2 @@
+## 15 november 1908 #
+Start van het project na voldoende challenges gedaan te hebben. Start met het maken van de files en deze al een keer te pushen naar de repository om te zorgen dat dit vlot verloopt.
