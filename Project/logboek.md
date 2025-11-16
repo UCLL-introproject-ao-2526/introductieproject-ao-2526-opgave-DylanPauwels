@@ -1,6 +1,26 @@
-## 15 november 1908 #
+## 15 november 1908 
 Start van het project na voldoende challenges gedaan te hebben. Start met het maken van de files en deze al een keer te pushen naar de repository om te zorgen dat dit vlot verloopt.
 Opnieuw lezen hoe het hele Git push gebeuren werkt
-## 15 november 2120 ##
+
+## 15 november 2120 
 Tot de conclusie gekomen tijdens het volgen van tutorial dat pygame niet correct werkt ten gevolge van foutief geïnstalleerde Python 3.14. Complete reinstall naar versie 3.13.9 uitgevoerd. Test toonde pygame venster en eerste knop.
 Nadien verder de tutorial gevolgd tot basis af is. Veel moeten pauzeren om over te nemen, hoe had ik dit efficiënter kunnen doen? 
+
+## 16 november 1730 
+Kleine aanpassingen maken om vertrouwd te raken met de code en kleine details te testen. Ideeën om uit te voeren: 'New hand' & scores meer centraliseren (op zicht), spelen met verschillende kleuren, uitzoeken hoe waardes kaart in alle hoeken te krijgen.
+-> lijn 30 een dubbele 'outcome = 0' gevonden, stond ook reeds in lijn 27. Wissen en testen (VSC geeft rode melding???)
+
+## 16 november 1824 
+kleuren aangepast naar eigen voorkeur, geland op grijstonen, verschillende percentages mogelijk. Ook getest met groen maar werkt niet, mogelijkheid andere gradaties kleuren?
+waardes kaarten in alle hoeken, enkele lijnen kopieren en aanpassen. ('10' komt net uit de kaart maar meer verplaatsen naar links verpest andere hun zicht te erg. Is hier een oplossing voor? -> Googlen wanneer tijd, geen prio.)
+(rode) meldingen VSC gutter = aanpassingen sinds push? Verdwenen na push anyway
+
+Welke aanpassingen kunnen nog gemaakt worden met deze basis? Window resizable maken? tekens toevoegen centraal per kaart? (Eventueel ander spel? Poker? Balatro? Hoe + mogelijk in 20 ish uur?)
+Starten met (uitzoeken) resizable maken, grootte van de window stoort me wanneer ik wissel van scherm.
+
+## 16 november 2100
+Na opzoekwerk volgende gevonden en geimplenteerd;
+pygame.RESIZABLE, logical size en surface toegevoegd aan init variables,
+functie screen to logical, alles qua screen vervangen door logical surface.
+Scherm is aanpasbaar tot full screen, verhouding = fix -> zwarte banden wanneer scherm niet perfect aansluit. Is dit het resultaat dat ik wou?
+Misschien lay-out nog aanpassen naar landschap ipv portret? Volstaat init verhouding aanpassen + opnieuw centreren van alle knoppen/kaarten?

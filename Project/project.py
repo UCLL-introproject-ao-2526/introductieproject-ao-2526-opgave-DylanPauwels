@@ -8,15 +8,34 @@ pygame.init()
 cards = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
 one_deck = 4 * cards
 decks = 4
-WIDTH = 600
-HEIGHT = 900
-screen = pygame.display.set_mode([WIDTH, HEIGHT])
+WIDTH, HEIGHT = 600, 900
+LOGICAL_SIZE = (600, 900)
+logical_surface = pygame.Surface(LOGICAL_SIZE)
+screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 pygame.display.set_caption('Pygame Blackjack!')
 fps = 60
 timer = pygame.time.Clock()
 font = pygame.font.Font('freesansbold.ttf', 44)
 smaller_font = pygame.font.Font('freesansbold.ttf', 36)
 active = False
+
+#caching sclaed surface
+_last_scaled_size = None
+_cached_scaled_surface = None
+
+def screen_to_logical(pos):
+    sw, sh = screen.get_size()
+    lw, lh = LOGICAL_SIZE
+    scale = min(sw / lw, sh / lh)
+    target_w, target_h = int(lw * scale), int(lh * scale)
+    x_offset = (sw - target_w) // 2
+    y_offset = (sh - target_h) // 2
+    sx, sy = pos
+    lx = (sx - x_offset) / scale
+    ly = (sy - y_offset) / scale
+    return int(lx), int(ly)
+
+
 # win, loss, draw/push
 records = [0, 0, 0]
 player_score = 0
@@ -41,35 +60,35 @@ def deal_cards(current_hand, current_deck):
 
 # draw scores for player and dealer on screen
 def draw_scores(player, dealer):
-    screen.blit(font.render(f'Score[{player}]', True, 'white'), (350, 400))
+    logical_surface.blit(font.render(f'Score[{player}]', True, 'white'), (350, 400))
     if reveal_dealer:
-        screen.blit(font.render(f'Score[{dealer}]', True, 'white'), (350, 100))
+        logical_surface.blit(font.render(f'Score[{dealer}]', True, 'white'), (350, 100))
 
 
 # draw cards visually onto screen
 def draw_cards(player, dealer, reveal):
     for i in range(len(player)):
-        pygame.draw.rect(screen, 'white', [70 + (70 * i), 460 + (5 * i), 120, 220], 0, 5)
-        screen.blit(font.render(player[i], True, 'black'), (75 + 70 * i, 465 + 5 * i))
-        screen.blit(font.render(player[i], True, 'black'), (75 + 70 * i, 635 + 5 * i))
-        screen.blit(font.render(player[i], True, 'black'), (150 + 70 * i, 465 + 5 * i))
-        screen.blit(font.render(player[i], True, 'black'), (150 + 70 * i, 635 + 5 * i))
-        pygame.draw.rect(screen, 'grey20', [70 + (70 * i), 460 + (5 * i), 120, 220], 3, 5)
+        pygame.draw.rect(logical_surface, 'white', [70 + (70 * i), 460 + (5 * i), 120, 220], 0, 5)
+        logical_surface.blit(font.render(player[i], True, 'black'), (75 + 70 * i, 465 + 5 * i))
+        logical_surface.blit(font.render(player[i], True, 'black'), (75 + 70 * i, 635 + 5 * i))
+        logical_surface.blit(font.render(player[i], True, 'black'), (150 + 70 * i, 465 + 5 * i))
+        logical_surface.blit(font.render(player[i], True, 'black'), (150 + 70 * i, 635 + 5 * i))
+        pygame.draw.rect(logical_surface, 'grey20', [70 + (70 * i), 460 + (5 * i), 120, 220], 3, 5)
 
     # if player hasn't finished turn, dealer will hide one card
     for i in range(len(dealer)):
-        pygame.draw.rect(screen, 'white', [70 + (70 * i), 160 + (5 * i), 120, 220], 0, 5)
+        pygame.draw.rect(logical_surface, 'white', [70 + (70 * i), 160 + (5 * i), 120, 220], 0, 5)
         if i != 0 or reveal:
-            screen.blit(font.render(dealer[i], True, 'black'), (75 + 70 * i, 165 + 5 * i))
-            screen.blit(font.render(dealer[i], True, 'black'), (75 + 70 * i, 335 + 5 * i))
-            screen.blit(font.render(dealer[i], True, 'black'), (150 + 70 * i, 165 + 5 * i))
-            screen.blit(font.render(dealer[i], True, 'black'), (150 + 70 * i, 335 + 5 * i))
+            logical_surface.blit(font.render(dealer[i], True, 'black'), (75 + 70 * i, 165 + 5 * i))
+            logical_surface.blit(font.render(dealer[i], True, 'black'), (75 + 70 * i, 335 + 5 * i))
+            logical_surface.blit(font.render(dealer[i], True, 'black'), (150 + 70 * i, 165 + 5 * i))
+            logical_surface.blit(font.render(dealer[i], True, 'black'), (150 + 70 * i, 335 + 5 * i))
         else:
-            screen.blit(font.render('???', True, 'black'), (75 + 70 * i, 165 + 5 * i))
-            screen.blit(font.render('???', True, 'black'), (75 + 70 * i, 335 + 5 * i))
-            screen.blit(font.render(dealer[i], True, 'black'), (150 + 70 * i, 165 + 5 * i))
-            screen.blit(font.render(dealer[i], True, 'black'), (150 + 70 * i, 335 + 5 * i))
-        pygame.draw.rect(screen, 'grey20', [70 + (70 * i), 160 + (5 * i), 120, 220], 3, 5)
+            logical_surface.blit(font.render('???', True, 'black'), (75 + 70 * i, 165 + 5 * i))
+            logical_surface.blit(font.render('???', True, 'black'), (75 + 70 * i, 335 + 5 * i))
+            logical_surface.blit(font.render(dealer[i], True, 'black'), (150 + 70 * i, 165 + 5 * i))
+            logical_surface.blit(font.render(dealer[i], True, 'black'), (150 + 70 * i, 335 + 5 * i))
+        pygame.draw.rect(logical_surface, 'grey20', [70 + (70 * i), 160 + (5 * i), 120, 220], 3, 5)
 
 
 # pass in player or dealer hand and get best score possible
@@ -101,33 +120,33 @@ def draw_game(act, record, result):
     button_list = []
     # initially on startup (not active) only option is to deal new hand
     if not act:
-        deal = pygame.draw.rect(screen, 'white', [150, 20, 300, 100], 0, 5)
-        pygame.draw.rect(screen, 'green', [150, 20, 300, 100], 3, 5)
+        deal = pygame.draw.rect(logical_surface, 'white', [150, 20, 300, 100], 0, 5)
+        pygame.draw.rect(logical_surface, 'green', [150, 20, 300, 100], 3, 5)
         deal_text = font.render('DEAL HAND', True, 'black')
-        screen.blit(deal_text, (165, 50))
+        logical_surface.blit(deal_text, (165, 50))
         button_list.append(deal)
     # once game started, shot hit and stand buttons and win/loss records
     else:
-        hit = pygame.draw.rect(screen, 'white', [0, 700, 300, 100], 0, 5)
-        pygame.draw.rect(screen, 'green', [0, 700, 300, 100], 3, 5)
+        hit = pygame.draw.rect(logical_surface, 'white', [0, 700, 300, 100], 0, 5)
+        pygame.draw.rect(logical_surface, 'green', [0, 700, 300, 100], 3, 5)
         hit_text = font.render('HIT ME', True, 'black')
-        screen.blit(hit_text, (73, 730))
+        logical_surface.blit(hit_text, (73, 730))
         button_list.append(hit)
-        stand = pygame.draw.rect(screen, 'white', [300, 700, 300, 100], 0, 5)
-        pygame.draw.rect(screen, 'green', [300, 700, 300, 100], 3, 5)
+        stand = pygame.draw.rect(logical_surface, 'white', [300, 700, 300, 100], 0, 5)
+        pygame.draw.rect(logical_surface, 'green', [300, 700, 300, 100], 3, 5)
         stand_text = font.render('STAND', True, 'black')
-        screen.blit(stand_text, (368, 730))
+        logical_surface.blit(stand_text, (368, 730))
         button_list.append(stand)
         score_text = smaller_font.render(f'Wins: {record[0]}   Losses: {record[1]}   Draws: {record[2]}', True, 'white')
-        screen.blit(score_text, (40, 840))
+        logical_surface.blit(score_text, (40, 840))
     # if there is an outcome for the hand that was played, display a restart button and tell user what happened
     if result != 0:
-        screen.blit(font.render(results[result], True, 'white'), (15, 25))
-        deal = pygame.draw.rect(screen, 'white', [75, 280, 450, 250], 0, 5)
-        pygame.draw.rect(screen, 'green', [75, 280, 450, 250], 3, 5)
-        pygame.draw.rect(screen, 'black', [78, 283, 444, 244], 3, 5)
+        logical_surface.blit(font.render(results[result], True, 'white'), (15, 25))
+        deal = pygame.draw.rect(logical_surface, 'white', [75, 280, 450, 250], 0, 5)
+        pygame.draw.rect(logical_surface, 'green', [75, 280, 450, 250], 3, 5)
+        pygame.draw.rect(logical_surface, 'black', [78, 283, 444, 244], 3, 5)
         deal_text = font.render('NEW HAND', True, 'black')
-        screen.blit(deal_text, (165, 380))
+        logical_surface.blit(deal_text, (165, 380))
         button_list.append(deal)
     return button_list
 
@@ -161,7 +180,7 @@ run = True
 while run:
     # run game at our framerate and fill screen with bg color
     timer.tick(fps)
-    screen.fill('grey45')
+    logical_surface.fill('grey45')
     # initial deal to player and dealer
     if initial_deal:
         for i in range(2):
@@ -183,9 +202,15 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-        if event.type == pygame.MOUSEBUTTONUP:
+        # update screen size if window resized    
+        elif event.type == pygame.VIDEORESIZE:
+            WIDTH, HEIGHT = event.size
+            screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
+        elif event.type == pygame.MOUSEBUTTONUP:
+
+            logical_pos = screen_to_logical(event.pos)
             if not active:
-                if buttons[0].collidepoint(event.pos):
+                if buttons and buttons[0].collidepoint(logical_pos):
                     active = True
                     initial_deal = True
                     game_deck = copy.deepcopy(decks * one_deck)
@@ -198,14 +223,15 @@ while run:
                     add_score = True
             else:
                 # if player can hit, allow them to draw a card
-                if buttons[0].collidepoint(event.pos) and player_score < 21 and hand_active:
+                if buttons and buttons[0].collidepoint(logical_pos) and player_score < 21 and hand_active:
                     my_hand, game_deck = deal_cards(my_hand, game_deck)
                 # allow player to end turn (stand)
-                elif buttons[1].collidepoint(event.pos) and not reveal_dealer:
+                elif len(buttons) > 1 and buttons[1].collidepoint(logical_pos) and not reveal_dealer:
                     reveal_dealer = True
                     hand_active = False
+                # allow player to start new hand after win/loss/push
                 elif len(buttons) == 3:
-                    if buttons[2].collidepoint(event.pos):
+                    if buttons[2].collidepoint(logical_pos):
                         active = True
                         initial_deal = True
                         game_deck = copy.deepcopy(decks * one_deck)
@@ -227,5 +253,17 @@ while run:
 
     outcome, records, add_score = check_endgame(hand_active, dealer_score, player_score, outcome, records, add_score)
 
+    # scale logical surface to fit screen while maintaining aspect ratio
+    sw, sh = screen.get_size()
+    lw, lh = LOGICAL_SIZE
+    scale = min(sw / lw, sh / lh)
+    target_size = (int(lw * scale), int(lh * scale))
+
+    _cached_scaled_surface = pygame.transform.smoothscale(logical_surface, (target_size))
+
+    screen.fill((0, 0, 0))
+    x_offset = (sw - target_size[0]) // 2
+    y_offset = (sh - target_size[1]) // 2
+    screen.blit(_cached_scaled_surface, (x_offset, y_offset))
     pygame.display.flip()
 pygame.quit()
