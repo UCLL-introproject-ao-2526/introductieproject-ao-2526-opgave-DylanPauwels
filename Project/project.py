@@ -18,9 +18,6 @@ timer = pygame.time.Clock()
 font = pygame.font.Font('freesansbold.ttf', 44)
 smaller_font = pygame.font.Font('freesansbold.ttf', 36)
 active = False
-
-#caching sclaed surface
-_last_scaled_size = None
 _cached_scaled_surface = None
 
 def screen_to_logical(pos):
