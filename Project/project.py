@@ -27,9 +27,8 @@ dealer_hand = []
 outcome = 0
 reveal_dealer = False
 hand_active = False
-outcome = 0
 add_score = False
-results = ['', 'PLAYER BUSTED O_O', 'Player WINS! :)', 'DEALER WINS :(', 'TIE GAME...']
+results = ['', 'PLAYER BUSTED O_O', 'YOU WIN! :D', 'DEALER WINS :(', 'TIE GAME...']
 
 
 # deal cards by selecting randomly from deck, and make function for one card at a time
@@ -53,7 +52,9 @@ def draw_cards(player, dealer, reveal):
         pygame.draw.rect(screen, 'white', [70 + (70 * i), 460 + (5 * i), 120, 220], 0, 5)
         screen.blit(font.render(player[i], True, 'black'), (75 + 70 * i, 465 + 5 * i))
         screen.blit(font.render(player[i], True, 'black'), (75 + 70 * i, 635 + 5 * i))
-        pygame.draw.rect(screen, 'red', [70 + (70 * i), 460 + (5 * i), 120, 220], 5, 5)
+        screen.blit(font.render(player[i], True, 'black'), (150 + 70 * i, 465 + 5 * i))
+        screen.blit(font.render(player[i], True, 'black'), (150 + 70 * i, 635 + 5 * i))
+        pygame.draw.rect(screen, 'grey20', [70 + (70 * i), 460 + (5 * i), 120, 220], 3, 5)
 
     # if player hasn't finished turn, dealer will hide one card
     for i in range(len(dealer)):
@@ -61,10 +62,14 @@ def draw_cards(player, dealer, reveal):
         if i != 0 or reveal:
             screen.blit(font.render(dealer[i], True, 'black'), (75 + 70 * i, 165 + 5 * i))
             screen.blit(font.render(dealer[i], True, 'black'), (75 + 70 * i, 335 + 5 * i))
+            screen.blit(font.render(dealer[i], True, 'black'), (150 + 70 * i, 165 + 5 * i))
+            screen.blit(font.render(dealer[i], True, 'black'), (150 + 70 * i, 335 + 5 * i))
         else:
             screen.blit(font.render('???', True, 'black'), (75 + 70 * i, 165 + 5 * i))
             screen.blit(font.render('???', True, 'black'), (75 + 70 * i, 335 + 5 * i))
-        pygame.draw.rect(screen, 'blue', [70 + (70 * i), 160 + (5 * i), 120, 220], 5, 5)
+            screen.blit(font.render(dealer[i], True, 'black'), (150 + 70 * i, 165 + 5 * i))
+            screen.blit(font.render(dealer[i], True, 'black'), (150 + 70 * i, 335 + 5 * i))
+        pygame.draw.rect(screen, 'grey20', [70 + (70 * i), 160 + (5 * i), 120, 220], 3, 5)
 
 
 # pass in player or dealer hand and get best score possible
@@ -106,23 +111,23 @@ def draw_game(act, record, result):
         hit = pygame.draw.rect(screen, 'white', [0, 700, 300, 100], 0, 5)
         pygame.draw.rect(screen, 'green', [0, 700, 300, 100], 3, 5)
         hit_text = font.render('HIT ME', True, 'black')
-        screen.blit(hit_text, (55, 735))
+        screen.blit(hit_text, (73, 730))
         button_list.append(hit)
         stand = pygame.draw.rect(screen, 'white', [300, 700, 300, 100], 0, 5)
         pygame.draw.rect(screen, 'green', [300, 700, 300, 100], 3, 5)
         stand_text = font.render('STAND', True, 'black')
-        screen.blit(stand_text, (355, 735))
+        screen.blit(stand_text, (368, 730))
         button_list.append(stand)
         score_text = smaller_font.render(f'Wins: {record[0]}   Losses: {record[1]}   Draws: {record[2]}', True, 'white')
-        screen.blit(score_text, (15, 840))
+        screen.blit(score_text, (40, 840))
     # if there is an outcome for the hand that was played, display a restart button and tell user what happened
     if result != 0:
         screen.blit(font.render(results[result], True, 'white'), (15, 25))
-        deal = pygame.draw.rect(screen, 'white', [150, 220, 300, 100], 0, 5)
-        pygame.draw.rect(screen, 'green', [150, 220, 300, 100], 3, 5)
-        pygame.draw.rect(screen, 'black', [153, 223, 294, 94], 3, 5)
+        deal = pygame.draw.rect(screen, 'white', [75, 280, 450, 250], 0, 5)
+        pygame.draw.rect(screen, 'green', [75, 280, 450, 250], 3, 5)
+        pygame.draw.rect(screen, 'black', [78, 283, 444, 244], 3, 5)
         deal_text = font.render('NEW HAND', True, 'black')
-        screen.blit(deal_text, (165, 250))
+        screen.blit(deal_text, (165, 380))
         button_list.append(deal)
     return button_list
 
@@ -156,7 +161,7 @@ run = True
 while run:
     # run game at our framerate and fill screen with bg color
     timer.tick(fps)
-    screen.fill('black')
+    screen.fill('grey45')
     # initial deal to player and dealer
     if initial_deal:
         for i in range(2):
