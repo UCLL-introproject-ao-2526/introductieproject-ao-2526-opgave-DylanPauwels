@@ -70,3 +70,11 @@ Na opzoeken verschillende kanalen debug lines ingevoerd om per frame te bekijken
 -> FPS tijdelijk verlaagd om overzicht te bewaren (later verhogen voor soepelheid)
 Niet alle debug lines komen zichtbaar in de terminal? -> is er een functie die niet effectief gecalled wordt?
 -> resolve en payout lines missen
+resolve(result) -> result in grijs, verwijderd en nu komt er enkel debug lines wanneer initial blackjack
+resolve ook laten gelden wanneer andere handen gespeeld worden
+
+## 23 november 2310
+problemen kwamen onder andere uit verwarring bij uitkomsten, deze als constanten bij globals gezet met benamingen
+-> na all in + winst kan er verder gespeeld worden
+Volgende stap te ondernemen = indien bankroll $0 en verliezende hand -> "Game Over" + optie om terug opnieuw te beginnen
+Hoe hieraan te beginnen? Mogelijkheid main game loop opnieuw te laten starten na een "Try again" knop? 

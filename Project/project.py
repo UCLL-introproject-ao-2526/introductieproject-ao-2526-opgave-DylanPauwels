@@ -15,7 +15,7 @@ LOGICAL_SIZE = (1200, 900)
 logical_surface = pygame.Surface(LOGICAL_SIZE)
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 pygame.display.set_caption('Pygame Blackjack!')
-fps = 3
+fps = 60
 timer = pygame.time.Clock()
 font = pygame.font.Font('freesansbold.ttf', 44)
 smaller_font = pygame.font.Font('freesansbold.ttf', 36)
@@ -33,7 +33,23 @@ outcome = 0
 reveal_dealer = False
 hand_active = False
 add_score = False
+round_resolved = False
+
+#outcome codes and results
 results = ['', 'PLAYER BUSTED O_o', 'YOU WIN! :D', 'DEALER WINS :(', 'TIE GAME...']
+OUT_BUST = 1
+OUT_WIN = 2
+OUT_LOSS = 3
+OUT_PUSH = 4
+OUT_BLACKJACK = 5
+#mapping labels to outcome codes
+RESULT_LABELS = {
+    OUT_BUST: "Bust",
+    OUT_WIN: "Win",
+    OUT_LOSS: "Loss",
+    OUT_PUSH: "Push",
+    OUT_BLACKJACK: "Blackjack"
+}
 
 #betting variables
 bankroll = 1000
@@ -115,13 +131,13 @@ def payout(result):
     stake = int(stake_reserved)
     dbg(f"Payout start -> bankroll={bankroll} stake_reserved={stake_reserved} bet_locked={bet_locked} result={result}")
     #result values: 1-bust, 2-win, 3-loss, 4-push, 5-blackjack
-    if result == 2:
+    if result == OUT_WIN:
         bankroll += stake * 2 #player win -> bet x2
         dbg(f" PAYOUT : normal win -> bankroll={bankroll} stake_reserved={stake_reserved} bet_locked={bet_locked}")
-    elif result == 5:
+    elif result == OUT_BLACKJACK:
         bankroll += int(stake * 2.5) #blackjack payout 3:2
         dbg(f" PAYOUT : blackjack win -> bankroll={bankroll} stake_reserved={stake_reserved} bet_locked={bet_locked}")
-    elif result == 4:
+    elif result == OUT_PUSH:
         bankroll += stake    #push, return bet
         dbg(f" PAYOUT : push -> bankroll={bankroll} stake_reserved={stake_reserved} bet_locked={bet_locked}")
     else:
@@ -131,24 +147,24 @@ def payout(result):
     bet_locked = False    
     dbg(f"Payout end -> bankroll={bankroll} stake_reserved={stake_reserved} bet_locked={bet_locked}")
 
-def resolve_round(result):
+def resolve_round():
     dbg(f" Resolve start -> my_hand={my_hand} dealer_hand={dealer_hand}")
     global outcome, dealer_score, player_score, hand_active, reveal_dealer
     player_score = calculate_score(my_hand)
     dealer_score = calculate_score(dealer_hand)
     # different outcomes based on result value (1 bust, 2 win, 3 loss, 4 push, 5 blackjack)
     if player_score > 21:
-        outcome = 1
+        outcome = OUT_BUST
     elif dealer_score > 21:
-        outcome = 2
+        outcome = OUT_WIN
     elif player_score == dealer_score:
-        outcome = 4
+        outcome = OUT_PUSH
     elif player_score == 21 and len(my_hand) == 2 and not (dealer_score == 21 and len(dealer_hand) == 2):
-        outcome = 5            
+        outcome = OUT_BLACKJACK            
     elif player_score > dealer_score:
-        outcome = 2
+        outcome = OUT_WIN
     else:
-        outcome = 3
+        outcome = OUT_LOSS
     dbg(f" Resolve outcome -> player_score={player_score} dealer_score={dealer_score} outcome={outcome}")
     payout(outcome)
     dbg(f"after payout -> bankroll={bankroll} stake_reserved={stake_reserved} bet_locked={bet_locked}")    
@@ -242,11 +258,14 @@ def draw_game(act, record, result):
     button_list = []
     if not act:
         # show final/all-in hint when a stake is reserved (bet_locked) even if bankroll == 0
-        if bet_locked and stake_reserved > 0:
+        if bet_locked and stake_reserved > 0 and bankroll <= 0:
             logical_surface.blit(font.render('Last $$$, final hand in progress!', True, 'yellow'), (100, 400))
         # only show Game Over when there is no reserved stake and no active bet
         elif bankroll <= 0 and not bet_locked and stake_reserved <= 0:
             logical_surface.blit(smaller_font.render('You are out of money! Restart the game to play again.', True, 'white'), (100, 400))
+     #safe retrieve result label       
+    label = RESULT_LABELS.get(result, 'Unknown Result')        
+    logical_surface.blit(font.render(label, True, 'white'), (550, 25))
     
     # initially on startup (not active) only option is to deal new hand
     if not act:
@@ -365,17 +384,34 @@ while run:
                 my_hand, game_deck = deal_cards(my_hand, game_deck)
                 dealer_hand, game_deck = deal_cards(dealer_hand, game_deck)
             initial_deal = False
+
+            player_score = calculate_score(my_hand)
+            dealer_score = calculate_score(dealer_hand)
+            if player_score == 21 and len(my_hand) == 2:
+                reveal_dealer = True
+                hand_active = False
+                dbg(" Player has blackjack on initial deal, revealing dealer")
+                resolve_round()
+                round_resolved = True
         # once game is activated, and dealt, calculate scores and display cards
         if active:
             player_score = calculate_score(my_hand)
             draw_cards(my_hand, dealer_hand, reveal_dealer)
+            # if player busts immediately reveal dealer to trigger round resolution
+            if player_score > 21 and hand_active:
+                reveal_dealer = True
+                hand_active = False
+
             if reveal_dealer:
                 dealer_score = calculate_score(dealer_hand)
                 if dealer_score < 17:
                     dealer_hand, game_deck = deal_cards(dealer_hand, game_deck)
                 else:
-                    if hand_active:
-                        resolve_round()    
+                    if not round_resolved and not hand_active:
+                        dbg(" Dealer finished, resolving round")
+                        resolve_round()
+                        round_resolved = True
+
             draw_scores(player_score, dealer_score)
         buttons = draw_game(active, records, outcome)
 
@@ -454,6 +490,8 @@ while run:
                             stake_reserved = 0
                             bet_locked = False
                             current_bet = 0
+
+                            round_resolved = False
 
                             dbg(f"New Hand -> bankroll={bankroll} stake_reserved={stake_reserved} bet_locked={bet_locked}")
 
