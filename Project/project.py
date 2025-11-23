@@ -8,8 +8,8 @@ pygame.init()
 cards = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
 one_deck = 4 * cards
 decks = 4
-WIDTH, HEIGHT = 600, 900
-LOGICAL_SIZE = (600, 900)
+WIDTH, HEIGHT = 1200, 900
+LOGICAL_SIZE = (1200, 900)
 logical_surface = pygame.Surface(LOGICAL_SIZE)
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 pygame.display.set_caption('Pygame Blackjack!')
@@ -19,19 +19,6 @@ font = pygame.font.Font('freesansbold.ttf', 44)
 smaller_font = pygame.font.Font('freesansbold.ttf', 36)
 active = False
 _cached_scaled_surface = None
-
-def screen_to_logical(pos):
-    sw, sh = screen.get_size()
-    lw, lh = LOGICAL_SIZE
-    scale = min(sw / lw, sh / lh)
-    target_w, target_h = int(lw * scale), int(lh * scale)
-    x_offset = (sw - target_w) // 2
-    y_offset = (sh - target_h) // 2
-    sx, sy = pos
-    lx = (sx - x_offset) / scale
-    ly = (sy - y_offset) / scale
-    return int(lx), int(ly)
-
 
 # win, loss, draw/push
 records = [0, 0, 0]
@@ -44,7 +31,117 @@ outcome = 0
 reveal_dealer = False
 hand_active = False
 add_score = False
-results = ['', 'PLAYER BUSTED O_O', 'YOU WIN! :D', 'DEALER WINS :(', 'TIE GAME...']
+results = ['', 'PLAYER BUSTED O_o', 'YOU WIN! :D', 'DEALER WINS :(', 'TIE GAME...']
+
+#betting variables
+bankroll = 1000
+current_bet = 0
+stake_reserved = 0
+bet_locked = False
+MIN_BET = 10
+MAX_BET = 10000
+
+chip_buttons = {
+    10: pygame.Rect(50, 820, 80, 50),
+    50: pygame.Rect(135, 820, 80, 50),
+    100: pygame.Rect(220, 820, 100, 50),
+    500: pygame.Rect(325, 820, 100, 50),
+}
+clear_button = pygame.Rect(430, 820, 150, 50)
+all_in_button = pygame.Rect(585, 820, 140, 50)
+placebet_button = pygame.Rect(730, 820, 220, 50)
+
+# betting functions
+def change_bet(amount):
+    global current_bet, bankroll
+    if bet_locked:
+        return
+    new_bet = current_bet + amount
+    new_bet = max(0, new_bet)
+    new_bet = min(bankroll, new_bet)
+    current_bet = new_bet
+
+def confirm_place_bet():
+    global bankroll, current_bet, stake_reserved, bet_locked
+    # require a positive bet that does not exceed bankroll
+    if current_bet >= MIN_BET and current_bet <= bankroll and bankroll > 0:
+        stake_reserved = int(current_bet)
+        bankroll -= stake_reserved      # remove stake from bankroll immediately
+        bet_locked = True
+        current_bet = 0                 # clear UI bet now that it's reserved
+        return True
+    return False
+
+
+def clear_bet():
+    global current_bet
+    if bet_locked:
+        return
+    current_bet = 0
+
+
+def all_in():
+    global current_bet, bankroll
+    if bet_locked:
+        return
+    current_bet = bankroll   
+
+#Betting payout function
+def payout(result):
+    global bankroll, stake_reserved, bet_locked
+    #nothing reserved -> safe exit
+    if current_bet <= 0:
+        bet_locked = False
+        stake_reserved = 0
+        return
+    stake = int(stake_reserved)
+    #result values: 1-bust, 2-win, 3-loss, 4-push, 5-blackjack
+    if result == 2:
+        bankroll += stake * 2 #player win -> bet x2
+    elif result == 5:
+        bankroll += int(stake * 2.5) #blackjack payout 3:2
+    elif result == 4:
+        bankroll += stake    #push, return bet
+    #reset bet
+    stake_reserved = 0
+    bet_locked = False    
+
+def resolve_round(result):
+    global outcome, add_score, dealer_score, player_score, hand_active, reveal_dealer
+    player_score = calculate_score(my_hand)
+    dealer_score = calculate_score(dealer_hand)
+    # different outcomes based on result value (1 bust, 2 win, 3 loss, 4 push, 5 blackjack)
+    if player_score > 21:
+        outcome = 1
+    elif dealer_score > 21:
+        outcome = 2
+    elif player_score == dealer_score:
+        outcome = 4
+    elif player_score == 21 and len(my_hand) == 2 and not (dealer_score == 21 and len(dealer_hand) == 2):
+        outcome = 5            
+    elif player_score > dealer_score:
+        outcome = 2
+    else:
+        outcome = 3
+    
+    payout(outcome)    
+    
+    #freeze hand state
+    hand_active = False 
+    reveal_dealer = True
+
+# get scale factors for logical to screen size conversion
+def screen_to_logical(pos):
+    sw, sh = screen.get_size()
+    lw, lh = LOGICAL_SIZE
+    scale = min(sw / lw, sh / lh)
+    target_w, target_h = int(lw * scale), int(lh * scale)
+    x_offset = (sw - target_w) // 2
+    y_offset = (sh - target_h) // 2
+    sx, sy = pos
+    lx = (sx - x_offset) / scale
+    ly = (sy - y_offset) / scale
+    return int(lx), int(ly)
 
 
 # deal cards by selecting randomly from deck, and make function for one card at a time
@@ -115,6 +212,10 @@ def calculate_score(hand):
 # draw game conditions and buttons
 def draw_game(act, record, result):
     button_list = []
+    if not act:
+        if bankroll <= 0:
+            logical_surface.blit(font.render('You are out of money! Restart the game to play again.', True, 'white'), (100, 400))
+    
     # initially on startup (not active) only option is to deal new hand
     if not act:
         deal = pygame.draw.rect(logical_surface, 'white', [150, 20, 300, 100], 0, 5)
@@ -122,7 +223,32 @@ def draw_game(act, record, result):
         deal_text = font.render('DEAL HAND', True, 'black')
         logical_surface.blit(deal_text, (165, 50))
         button_list.append(deal)
-    # once game started, shot hit and stand buttons and win/loss records
+        #betting display
+        logical_surface.blit(smaller_font.render(f'Bankroll: ${bankroll}', True, 'white'), (50, 750))
+        logical_surface.blit(smaller_font.render(f'Current Bet: ${current_bet}', True, 'white'), (50, 780))
+        #draw chip buttons
+        pygame.draw.rect(logical_surface, 'gold', chip_buttons[10], 0, 5)
+        logical_surface.blit(smaller_font.render('$10', True, 'black'), (chip_buttons[10].x + 15, chip_buttons[10].y + 10))
+        pygame.draw.rect(logical_surface, 'gold', chip_buttons[50], 0, 5)
+        logical_surface.blit(smaller_font.render('$50', True, 'black'), (chip_buttons[50].x + 15, chip_buttons[50].y + 10))
+        pygame.draw.rect(logical_surface, 'gold', chip_buttons[100], 0, 5)
+        logical_surface.blit(smaller_font.render('$100', True, 'black'), (chip_buttons[100].x + 10, chip_buttons[100].y + 10))
+        pygame.draw.rect(logical_surface, 'gold', chip_buttons[500], 0, 5)
+        logical_surface.blit(smaller_font.render('$500', True, 'black'), (chip_buttons[500].x + 10, chip_buttons[500].y + 10))
+        # clear, all in and place bet buttons
+        pygame.draw.rect(logical_surface, 'red', clear_button, 0, 5)
+        logical_surface.blit(smaller_font.render('CLEAR', True, 'black'), (clear_button.x + 10, clear_button.y + 10))  
+        pygame.draw.rect(logical_surface, 'red', all_in_button, 0, 5)
+        logical_surface.blit(smaller_font.render('ALL IN', True, 'black'), (all_in_button.x + 10, all_in_button.y + 10))  
+        pygame.draw.rect(logical_surface, 'green', placebet_button, 0, 5)
+        logical_surface.blit(smaller_font.render('PLACE BET', True, 'black'), (placebet_button.x + 10, placebet_button.y + 10)) 
+        button_list.extend([chip_buttons[10], chip_buttons[50], chip_buttons[100], chip_buttons[500], clear_button, all_in_button, placebet_button])
+        # bet button (greyed out if no/too small bet placed)   
+        place_bet_color = 'springgreen' if current_bet >= MIN_BET else 'grey50'
+        pygame.draw.rect(logical_surface, place_bet_color, placebet_button, 0, 5)
+        logical_surface.blit(smaller_font.render('PLACE BET', True, 'black'), (placebet_button.x + 10, placebet_button.y + 10))
+        
+    # once game started, show hit and stand buttons and win/loss records
     else:
         hit = pygame.draw.rect(logical_surface, 'white', [0, 700, 300, 100], 0, 5)
         pygame.draw.rect(logical_surface, 'green', [0, 700, 300, 100], 3, 5)
@@ -151,7 +277,7 @@ def draw_game(act, record, result):
 # check endgame conditions function
 def check_endgame(hand_act, deal_score, play_score, result, totals, add):
     # check end game scenarios is player has stood, busted or blackjacked
-    # result 1- player bust, 2-win, 3-loss, 4-push
+    # result 1- player bust, 2-win, 3-loss, 4-push, 5-blackjack
     if not hand_act and deal_score >= 17:
         if play_score > 21:
             result = 1
@@ -159,6 +285,8 @@ def check_endgame(hand_act, deal_score, play_score, result, totals, add):
             result = 2
         elif play_score < deal_score <= 21:
             result = 3
+        elif play_score == 21 and len(my_hand) == 2 and not (dealer_score == 21 and len(dealer_hand) == 2):
+            result = 5
         else:
             result = 4
         if add:
@@ -174,10 +302,22 @@ def check_endgame(hand_act, deal_score, play_score, result, totals, add):
 
 # main game loop
 run = True
+_cached_scaled_surface = None
+
 while run:
     # run game at our framerate and fill screen with bg color
     timer.tick(fps)
     logical_surface.fill('grey45')
+    
+    # check bankroll, if 0 disable game start
+    if bankroll <= 0:
+        logical_surface.blit(font.render('You are out of money! Restart the game to play again.', True, 'white'), (100, 400))
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+        continue
+
     # initial deal to player and dealer
     if initial_deal:
         for i in range(2):
@@ -192,6 +332,9 @@ while run:
             dealer_score = calculate_score(dealer_hand)
             if dealer_score < 17:
                 dealer_hand, game_deck = deal_cards(dealer_hand, game_deck)
+            else:
+                if hand_active:
+                    resolve_round()    
         draw_scores(player_score, dealer_score)
     buttons = draw_game(active, records, outcome)
 
@@ -201,23 +344,49 @@ while run:
             run = False
         # update screen size if window resized    
         elif event.type == pygame.VIDEORESIZE:
-            WIDTH, HEIGHT = event.size
-            screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
-        elif event.type == pygame.MOUSEBUTTONUP:
+            screen = pygame.display.set_mode(event.size, pygame.RESIZABLE)
 
+        elif event.type == pygame.MOUSEBUTTONUP:
             logical_pos = screen_to_logical(event.pos)
+            if logical_pos is None:
+                continue
+            # if table not active, allow betting UI + deal/new hand
             if not active:
+                # Betting UI
+                if not bet_locked:
+                    for chip_value, chip_rect in chip_buttons.items():
+                        if chip_rect.collidepoint(logical_pos):
+                            change_bet(int(chip_value))
+                            break
+                # check clear, all in and place bet buttons
+                if clear_button.collidepoint(logical_pos):
+                    clear_bet()
+                elif all_in_button.collidepoint(logical_pos) and bankroll > 0:
+                    all_in()
+                elif placebet_button.collidepoint(logical_pos):
+                    if confirm_place_bet():
+                        pass  # bet placed successfully
+                    else:
+                        pass  # do nothing if bet not valid    
+                else: #bet_locked is True -> stake reserved, player must press deal to start hand
+                    pass     
+
+                # deal new hand button
                 if buttons and buttons[0].collidepoint(logical_pos):
-                    active = True
-                    initial_deal = True
-                    game_deck = copy.deepcopy(decks * one_deck)
-                    my_hand = []
-                    dealer_hand = []
-                    outcome = 0
-                    hand_active = True
-                    reveal_dealer = False
-                    outcome = 0
-                    add_score = True
+                    if bet_locked and not active and stake_reserved > 0:
+                        active = True
+                        initial_deal = True
+                        game_deck = copy.deepcopy(decks * one_deck)
+                        my_hand = []
+                        dealer_hand = []
+                        outcome = 0
+                        hand_active = True
+                        reveal_dealer = False
+                        add_score = True
+                        dealer_score = 0
+                        player_score = 0    
+                    else: #ignore or show message if no bet placed
+                        pass    
             else:
                 # if player can hit, allow them to draw a card
                 if buttons and buttons[0].collidepoint(logical_pos) and player_score < 21 and hand_active:
@@ -227,20 +396,23 @@ while run:
                     reveal_dealer = True
                     hand_active = False
                 # allow player to start new hand after win/loss/push
-                elif len(buttons) == 3:
-                    if buttons[2].collidepoint(logical_pos):
-                        active = True
-                        initial_deal = True
-                        game_deck = copy.deepcopy(decks * one_deck)
+                elif len(buttons) == 3 and buttons[2].collidepoint(logical_pos):
+                        # don't allow new hand unless bet placed
+                        active = False
+                        initial_deal = False
                         my_hand = []
                         dealer_hand = []
                         outcome = 0
                         hand_active = True
                         reveal_dealer = False
-                        outcome = 0
                         add_score = True
                         dealer_score = 0
                         player_score = 0
+
+                        stake_reserved = 0
+                        bet_locked = False
+                        current_bet = 0
+
 
 
     # if player busts, automatically end turn - treat like a stand
@@ -263,4 +435,5 @@ while run:
     y_offset = (sh - target_size[1]) // 2
     screen.blit(_cached_scaled_surface, (x_offset, y_offset))
     pygame.display.flip()
+
 pygame.quit()

@@ -24,3 +24,33 @@ pygame.RESIZABLE, logical size en surface toegevoegd aan init variables,
 functie screen to logical, alles qua screen vervangen door logical surface.
 Scherm is aanpasbaar tot full screen, verhouding = fix -> zwarte banden wanneer scherm niet perfect aansluit. Is dit het resultaat dat ik wou?
 Misschien lay-out nog aanpassen naar landschap ipv portret? Volstaat init verhouding aanpassen + opnieuw centreren van alle knoppen/kaarten?
+
+## 16 november 2330
+Gespeeld met verschillende verhoudingen, waarvoor hebben we andere verhouding nodig? Welke content komt nog bij het spel? Bets plaatsen?
+Bekijken voor het implementeren van bets volgende werkmoment project ;
+Hoe beginnen? Copy paste van andere knoppen? -> Lay out/locatie aanpassen
+Wanneer moeten de knoppen beschikbaar zijn? Voor hand gedeeld/zichtbaar is of bij zien eerste kaart? 
+
+ 
+## 22 november 1345
+Idee van vorige week proberen implementeren, starten met bet x, all-in en clear voor evt foutief inzetten
+Hoeveelheden? 10, 50, 100, 500 -> Voldoende? Te veel? Kan nog aangepast worden
+
+## 22 november 1550
+Bij eerste ronde na opstarten kan er nu ingezet worden, spel start na place bet.
+Na elke hand moet er nochtans ook ingezet kunnen worden en een verandering van kapitaal zijn anders is betting nog steeds nutteloos.
+Volgens blakcjack regels bij normale winst return 1 op 1 of blackjack 3 op 2.
+-> Na place bet = geld van kapitaal afgetrokken dus return bij winst zou huidige inzet + 2 of 2.5 moeten zijn.
+ Mogelijke uitkomsten volgens google bij blackjack: Win, lose, push, blackjack
+ Deze opties hernemen in helper functies.
+
+ ## 23 november 1630
+Verder met UI betting in verdere rondes na onderbreking gisteren
+Ergens in de fout gegaan, game crashes bij all-in. Na gespeelde hand geen mogelijkheid tot nieuwe bet, ondanks dat de functies bij helprs en main geplaatst zijn -> uitzoeken waar de fout zit
+
+## 23 november 2020
+Extra variabele toegevoegd "stake_reserved" om duidelijkere info te geven buiten current_bet om
+Outcome possibilities ergens de nummers gewisseld, inconsistentie creeerde crash? Outcomes aangepast
+Momenteel mogelijk om na een hand opnieuw in te zetten, terugkeer naar bet screen oke.
+Bij inzetten tot '0' of all in geen mogelijkheid meer tot deal hand:
+Uitzoeken waar deze blokkeert? Pygame crashed niet maar UI reageert ook niet meer. 
