@@ -54,3 +54,19 @@ Outcome possibilities ergens de nummers gewisseld, inconsistentie creeerde crash
 Momenteel mogelijk om na een hand opnieuw in te zetten, terugkeer naar bet screen oke.
 Bij inzetten tot '0' of all in geen mogelijkheid meer tot deal hand:
 Uitzoeken waar deze blokkeert? Pygame crashed niet maar UI reageert ook niet meer. 
+
+## 23 november 2035
+in main game loop "if bankroll <= 0 disable game start' -> deze aanpassen met toevoeging stake reserved?
+-> Deal hand terug mogelijk na krijgen melding 'out of money', na hand geen nieuwe bet meer mogelijk omdat game end getriggerd is(?)
+Hoe aan te pakken? Game end mag pas komen als $0 door bet en verlies hand
+
+## 23 november 2100
+Enkele aanpassingen zorgden voor onverwacht sluiten bij "$0" -> import traceback om eventuele errors te lezen
+-> enkele nieuwe lijnen verkeerde shift + aanpassing font naar smallerfont door tab smallerfontfont ontdekt
+Spel sluit niet meer automatisch maar stopt nog steeds na de hand waar all in gegaan is ongeacht resultaat -> neemt ergens nog steeds bankroll <= 0 als absoluut?
+
+## 23 november 2200
+Na opzoeken verschillende kanalen debug lines ingevoerd om per frame te bekijken of de statussen kloppen
+-> FPS tijdelijk verlaagd om overzicht te bewaren (later verhogen voor soepelheid)
+Niet alle debug lines komen zichtbaar in de terminal? -> is er een functie die niet effectief gecalled wordt?
+-> resolve en payout lines missen
