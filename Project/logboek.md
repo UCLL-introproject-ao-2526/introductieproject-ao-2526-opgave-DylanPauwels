@@ -76,5 +76,6 @@ resolve ook laten gelden wanneer andere handen gespeeld worden
 ## 23 november 2310
 problemen kwamen onder andere uit verwarring bij uitkomsten, deze als constanten bij globals gezet met benamingen
 -> na all in + winst kan er verder gespeeld worden
+Game crashte bij initial blackjack: terminal geeft fout in lijn 318 -> result[result] vervangen door labels
 Volgende stap te ondernemen = indien bankroll $0 en verliezende hand -> "Game Over" + optie om terug opnieuw te beginnen
 Hoe hieraan te beginnen? Mogelijkheid main game loop opnieuw te laten starten na een "Try again" knop? 
