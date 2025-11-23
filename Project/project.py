@@ -315,7 +315,8 @@ def draw_game(act, record, result):
         logical_surface.blit(score_text, (40, 840))
     # if there is an outcome for the hand that was played, display a restart button and tell user what happened
     if result != 0:
-        logical_surface.blit(font.render(results[result], True, 'white'), (15, 25))
+        label = RESULT_LABELS.get(result, "Unknown result")
+        logical_surface.blit(font.render(label, True, 'white'), (15, 25))
         deal = pygame.draw.rect(logical_surface, 'white', [75, 280, 450, 250], 0, 5)
         pygame.draw.rect(logical_surface, 'green', [75, 280, 450, 250], 3, 5)
         pygame.draw.rect(logical_surface, 'black', [78, 283, 444, 244], 3, 5)
