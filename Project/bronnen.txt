@@ -1,6 +1,5 @@
 ## Reflectie bij video !(Bryan Liles - Test all the f***ing time - Ruby Hoedown 2008)[https://youtu.be/iwUR0kOVNs8]
 
-
 De spreker, Bryan Liles, wilt het punt duidelijk maken dat je je code continu moet testen. 
 Dit doet hij door, op een ludieke wijze, na elk gemaakt punt te herhalen: "test all the fucking time"
 
@@ -32,7 +31,7 @@ Hij eindigt zijn lezing met een inspirerende quote alvorens over te gaan op een 
 "Do not try to imitate the old masters. Seek what they sought."
 Test all the fucking time.
 
-# Persoonlijke reflectie eens/oneens (min 50woorden)
+# Persoonlijke reflectie
 
 Ik sluit me aan bij de mening van de spreker, wat het belang is van de tests en dat TDD en BDD enorm goede tools zijn.
 Tijdens het afspelen van de video de eerste keer hiervoor ook gepauzeerd om deze termen kort te Googlen om ze zeker te begrijpen.
