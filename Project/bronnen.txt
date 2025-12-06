@@ -1,1 +1,49 @@
-Reflectie bij video;
+## Reflectie bij video !(Bryan Liles - Test all the f***ing time - Ruby Hoedown 2008)[https://youtu.be/iwUR0kOVNs8]
+
+
+De spreker, Bryan Liles, wilt het punt duidelijk maken dat je je code continu moet testen. 
+Dit doet hij door, op een ludieke wijze, na elk gemaakt punt te herhalen: "test all the fucking time"
+
+Initieel overloopt hij kort zijn eigen ervaring aan hoe hij aan coderen en testen is begonnen.
+Al snel wordt duidelijk dat eenmaal hij aan testing begint, hij deze tests schrijft om zijn reeds bestaande code te bevestigen.
+Dit komt neer op het beschrijven van de code die reeds bestaat maar zorgt daarvoor niet dat de breekbaarheid van zijn code blootgelegd wordt.
+Toen hij dit eenmaal besefte is hij beginnen studeren en uitzoeken hoe testen effectief werkt, welke mogelijkheden er zijn en hoe goede tests effectief opgebouwd zijn.
+
+Hier komt hij uit bij 'BDD' oftewel behavior driven development, waarvan hij dacht dat het zijn groot 'Eureka' moment was;
+In plaats van beschrijven wat de code al doet, moet de test beschrijven wat de code zou moeten doen.
+
+Deze manier van werken is echter niet makkelijk om mee starten, dus geeft hij vier regels over hoe je je dit eigen kan maken;
+1. Comfortabel worden met TDD (test driven development -> tests schrijven voor aan code te beginnen).
+2. Maak er een missie van TDD toe te passen, zelfs wanneer het moeilijk is.
+3. Beeld de applicatie die je maakt in als een object dat gedrag toont.
+4. Creëer voorbeelden van het gedrag.
+
+De sterkte van TDD wordt hier ook aangehaald.
+Ondanks dat het trager is om te starten, zal het uiteindelijk een beter resultaat opleveren.
+
+Vervolgens gaat hij over op de verschillende gevoelens die hij heeft ervaren door zich deze manier van werken eigen te maken;
+Verdrietig, ongeduldigheid en rouw doordat het initieel traag gaat en hij weinig succes had met testen.
+Echter gaat dit over op aanvaarding omdat zijn werk uiteindelijk van betere kwaliteit zou zijn en hij minder zou moeten terugkeren op het resultaat.
+
+Hierna geeft hij nog een aantal voorbeelden van programma's die gebruikt worden voor testing alsook zijn mening. (RSpec, Bacon, Shoulda,Test::Unit,...)
+Alsook de observatie dat we op deze manier coderen om de specs en tests te valideren en dit ervoor zorgt dat het als een spel aanvoelt.
+
+Hij eindigt zijn lezing met een inspirerende quote alvorens over te gaan op een korte Q&A;
+"Do not try to imitate the old masters. Seek what they sought."
+Test all the fucking time.
+
+# Persoonlijke reflectie eens/oneens (min 50woorden)
+
+Ik sluit me aan bij de mening van de spreker, wat het belang is van de tests en dat TDD en BDD enorm goede tools zijn.
+Tijdens het afspelen van de video de eerste keer hiervoor ook gepauzeerd om deze termen kort te Googlen om ze zeker te begrijpen.
+Hierbij "viel menne Frank" ook om de link te leggen met de challenges en de eerste onderdelen van programming 1 die ik heb uitgevoerd.
+Dit bevestigde de punten uit de video, zoals het laten aanvoelen als een spel met momenten. 
+Alsook het ogenschijnlijke moeilijke begin om deze tests uit te schrijven.
+Voor mij was dit tussen de regels door een inspirerende video.
+
+Qua presentatie vond ik de spreker zeer aangenaam.
+De ludieke manier van voordragen met op de juiste momenten korte grapjes tussendoor zorgt dat aandachtig luisteren vanzelf komt.
+
+# Conclusie
+Testen is belangrijk voor goede resultaten. Ludiek gepresenteerd.
+Test all the fucking time!
