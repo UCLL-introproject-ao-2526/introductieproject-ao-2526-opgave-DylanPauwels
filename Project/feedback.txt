@@ -1,8 +1,58 @@
-REMINDER TO SELF!!!
+Hey Daan
 
-De requirements (vereisten) zijn:
+Aangaande het vak introductieproject wil ik je via deze weg even feedback geven over hoe ik dit vak ervaren heb.
+Als beroepsmilitair heb ik enkele jaren zelf in het onderricht gestaan en hiervoor zelf ook methodes aangeleerd gekregen, dit gaat mogelijks dus wat anders overkomen als wat je gewoon bent.
 
-In email formaat
-Minstens 200 woorden
-Met feedback
-Professioneel
+Om te beginnen moet ik toegeven dat het niet vaak is voorgevallen dat het positieve zo overheersend is.
+Voor mijn job heb ik nochtans ook reeds enorm veel cursussen mogen/moeten volgen, waarvan toch ook een groot deel goed in elkaar zaten.
+
+De challenges waren mijn favoriete onderdeel van heel de cursus;
+Door het direct kunnen testen krijgt bijleren een soort speels karakter, de dopamine boost na elk groen vinkje te zien was verslavend.
+Bijkomend was het een enorm divers aanbod aan info en onderwerpen, die elk op hun eigen manier ervoor zorgden dat je moest nadenken en/of gaan opzoeken.
+Dit uitzoeken gaf bijkomend vaak ook nog extra tools aan die toekomstgericht nog van pas kunnen komen. 
+Ik denk hierbij terug aan de SHA1-tool of het uitkomen op HashCat voor het achterhalen van het wachtwoord.
+Met de BrainFuck challenges had ik het wel enorm moeilijk om de logica te vinden of toe te passen.
+
+Het aspect communicatie is een deel waar ik initieel niet bij had stilgestaan dat het onderdeel uit zou maken van dit vak.
+Echter ervaar ik dit als de reminder dat hulp vragen menselijk is en niemand zomaar alles weet of kan.
+Het zorgt voor zelfreflectie en het sociaal aspect aan IT.
+Deze "verplichting" tot zelfreflectie en vragen opschrijven zoals bv het logboek is iets waar ik nooit eerder mee bezig ben geweest. 
+Dit is dan ook een gedeelte waar ik ook buitenom het vak aan ga proberen werken, aangezien het toch ook veel rust en mentale vrijheid creëert.
+Niet te vergeten is de vlotte communicatie en open aanpak van jou, als onderrichter, echt een gigantische meerwaarde, iets waarvan ik zeker ben dat het veel inspanning en energie kost.
+Een moment van appreciatie leek me hier dan ook wel op z'n plaats.
+
+Nu kan natuurlijk niet alles alleen maar positief zijn en moet ik even overschakelen op een puntje van kritiek.
+Wat er minder goed afgewerkt uitziet is de aan-de-slag pagina. Deze bevat nog relatief veel schrijffouten.
+Idealiter zouden deze stelselmatig nog aangepast moeten worden, wanneer je daar eens een vrij moment voor zou kunnen vinden.  
+Ik besef dat dit punt knullig kan overkomen, aangezien de kans zeer groot is dat ik hier zelf nog wel wat schrijffouten over het hoofd heb gezien.
+De beste scheepslui staan dan ook aan wal.
+
+Om het volgens de sandwich-methode verder af te werken zou ik het feedback gedeelte graag willen afsluiten op een positieve noot.
+Hiervoor gebruik ik dan ook de grootste uitdaging van het vak: het pygame project.
+Starten met de tutorial die gekozen is;
+De manier van uitleg tijdens dat de persoon aan het coderen was, was enorm leerrijk voor zowel te begrijpen wat bepaalde code doet alsook het (denk)proces dat hiermee gepaard ging.
+Soms was door de snelheid van de video en het vele switchen tussen de verschillende onderdelen (variabelen, helper functies, main loop) het echter wel moeilijk om vlot te volgen.
+Ook met een tweede scherm moest ik vaak pauzeren en terugscrollen.
+Natuurlijk kan dit ook te maken hebben met een gebrek aan snelheid qua typen langs mijnerzijde.
+Al bij al een enorm goed gekozen video!
+Gedurende het werken aan het project zelf is de meeste tijd uiteindelijk gespendeerd aan het opzoeken naar hoe ik zaken kon aanpassen of troubleshooten.
+Dit op zich was wel een eye-opener dat leren programmeren toch een grotere uitdaging zal zijn dan oorspronkelijk verwacht. 
+Troubleshooten bleek vaak gewoon een accidentele typefout, wat korte frustraties op het moment van ontdekking ook omvormden in momenten van luidop gelach.
+Deze manier van zelf kunnen uitzoeken en vrijheid heeft mij zowel veel bijgeleerd alsook duidelijk gemaakt dat de nog af te leggen weg erg lang zal zijn.
+Toch zie ik dit als enorm motiverend en heb ik me oprecht geamuseerd tijdens het werken aan dit project. 
+
+Voor ik overga op de conclusie wil ik nog even duiding geven naar de keuze voor deze uitgebreide uitleg over de verschillende aspecten.
+Normaliter probeer ik feedback kort en bondig te houden. 
+Echter ben ik er hier vanaf geweken omdat het subjectieve gedeelte, de ervaring, meer nut/effect gaat hebben vermoed ik.
+Ik merkte op dat je veel waarde hecht aan het menselijke aspect binnenin de IT wereld, iets waar de old-school clichés niet aan meewerken.
+Kort en objectief feedback geven leek me dan ook te droog, omdat je inzet en passie hiervoor te duidelijk merkbaar zijn.
+
+Na al dit aanslepende "yappen" zoals de jeugd zou zeggen, eindelijk de conclusie.
+Het vak, met al zijn aspecten zit enorm goed in elkaar. Met als grootste drijfveer de persoon die erachter staat.
+Hou deze format aan en het vak zal een enorme motivator en rots in de branding blijven voor toekomstige studenten.
+
+Keep up the good work!
+
+Met vriendelijke groeten
+Dylan
+
