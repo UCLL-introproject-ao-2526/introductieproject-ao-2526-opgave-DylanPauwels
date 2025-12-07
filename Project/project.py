@@ -6,7 +6,7 @@ import traceback
 import time
 
 pygame.init()
-# game variables
+# game variables [DN] dit is geen nuttige comment, het is een game, dus je zegt 'variables' iedereen kan dat zien door de code te lezen. 
 cards = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
 one_deck = 4 * cards
 decks = 4
@@ -20,7 +20,7 @@ timer = pygame.time.Clock()
 font = pygame.font.Font('freesansbold.ttf', 44)
 smaller_font = pygame.font.Font('freesansbold.ttf', 36)
 active = False
-_cached_scaled_surface = None
+_cached_scaled_surface = None # [DN] waarom begint deze met een _ ?
 
 # win, loss, draw/push
 records = [0, 0, 0]
@@ -59,12 +59,13 @@ bet_locked = False
 MIN_BET = 10
 MAX_BET = 10000
 
-chip_buttons = {
+chip_buttons = { # [DN] je kan dit korter schrijven, de x coordinate is altijd + 85, de rest blijft hetzelfde. Gebruik ofwel een loop, of gebruik vriabelen voor 820 of 50. Zo moet je het maar op 1 plek aanpassen als je het later moet veranderen
     10: pygame.Rect(50, 820, 80, 50),
     50: pygame.Rect(135, 820, 80, 50),
     100: pygame.Rect(220, 820, 100, 50),
     500: pygame.Rect(325, 820, 100, 50),
 }
+
 clear_button = pygame.Rect(430, 820, 150, 50)
 all_in_button = pygame.Rect(585, 820, 140, 50)
 placebet_button = pygame.Rect(730, 820, 220, 50)
@@ -84,13 +85,13 @@ def dbg(message):
 
 # betting functions
 def change_bet(amount):
-    global current_bet, bankroll
+    global current_bet, bankroll  # [DN] niet zeker waarom je hier global gebruikt, maar ook veel variabelen bovenaan declareert. Maakt niet zoveel uit wat je kiest, het belangrijkste is 
     if bet_locked:
         return
-    new_bet = current_bet + amount
-    new_bet = max(0, new_bet)
-    new_bet = min(bankroll, new_bet)
-    current_bet = new_bet
+    new_bet = current_bet + amount # [DN] deze 4 regels
+    new_bet = max(0, new_bet) # [DN] mogen gerust
+    new_bet = min(bankroll, new_bet) # [DN] op een lijn
+    current_bet = new_bet # [DN] schermen zijn breed
 
 def confirm_place_bet():
     global bankroll, current_bet, stake_reserved, bet_locked
@@ -99,7 +100,7 @@ def confirm_place_bet():
         stake_reserved = int(current_bet)
         bankroll -= stake_reserved      # reserve stake from bankroll
         bet_locked = True
-        current_bet = 0                 # clear UI bet now that it's reserved
+        current_bet = 0                 # clear UI bet now that it's reserved [DN] vreemd dat je begint over de UI hier, dit lijkt code over het spel. Architectuur is normaalgezien dat UI alles ziet, maar de 'echte' functionaliteit niet weet dat ui bestaat. Dit is 2de jaars kennis, mvvm gewoon dat je weet dat het bestaat
         dbg(f"Place OK -> bankroll={bankroll} stake_reserved={stake_reserved} bet_locked={bet_locked}")
         return True
     dbg(f"Place FAIL -> bankroll={bankroll} stake_reserved={stake_reserved} bet_locked={bet_locked}")
@@ -141,6 +142,7 @@ def payout(result):
         bankroll += stake    #push, return bet
         dbg(f" PAYOUT : push -> bankroll={bankroll} stake_reserved={stake_reserved} bet_locked={bet_locked}")
     else:
+        # [DN] je mag gerust een function dbgMoney() maken die dit dbg()'d. Dan heb je niet al die argumenten continue in je gezicht. Ik vind moeilijk de code te zien die iets doet
         dbg(f" PAYOUT : loss -> bankroll={bankroll} stake_reserved={stake_reserved} bet_locked={bet_locked}")    
     #reset bet
     stake_reserved = 0
@@ -205,6 +207,7 @@ def draw_scores(player, dealer):
 
 # draw cards visually onto screen
 def draw_cards(player, dealer, reveal):
+    # [DN] zelfde remark, ik denk dat je heel veel herhaling hebt die je minstens in variabelen kunt steken, 
     for i in range(len(player)):
         pygame.draw.rect(logical_surface, 'white', [70 + (70 * i), 460 + (5 * i), 120, 220], 0, 5)
         logical_surface.blit(font.render(player[i], True, 'black'), (75 + 70 * i, 465 + 5 * i))
