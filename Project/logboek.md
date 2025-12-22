@@ -80,3 +80,18 @@ Game crashte bij initial blackjack: terminal geeft fout in lijn 318 -> result[re
 Volgende stap te ondernemen = indien bankroll $0 en verliezende hand -> "Game Over" + optie om terug opnieuw te beginnen
 Hoe hieraan te beginnen? Mogelijkheid main game loop opnieuw te laten starten na een "Try again" knop? 
 Heb ik hier nog de tijd voor? Time's precious, hoeveel tijd heb ik al gespendeerd? Ongeveer de aangeraden timing van ca. 20hr? Andere prio's eerst afwerken?
+
+## Reflectie Feedback
+Over het algemeen valt er niet te discussiëren over of de feedback correct is, het legt overal simpele pijnpunten of details bloot die beter kunnen. De makkelijke voorstellen voor aanpassen die erbij worden gegeven zijn ook mooi meegenomen. Het toepassen op dit project zal jammer genoeg niet lukken denk ik, maar de lessen neem ik mee naar de rest van de vakken.
+Er wordt bijvoorbeeld enkele malen aangehaald dat sommige zaken gerust korter kunnen, door oftewel lijnen samen te voegen of extra variabelen te gebruiken waar veel herhaling is, zoals bijvoorbeeld de x-coördinaten. Hier had ik zelf niet eerder over nagedacht, maar dit vind ik wel een goede tip om in de toekomst te kunnen toepassen. Simpel maar efficiënt.
+De opmerking aangaande het debug gebeuren is eentje waar ik zelf ook mee in de knoop lag. Dit gedeelte liet me het hardste twijfelen of het geheel nog wel leesbaar was, de bevestiging die hier bij komt kijken was dan ook wel verwacht. Een debug functie proberen implementeren zou veel overzichtelijker zijn en vermoedelijk ook makkelijker om nadien terug eruit te halen indien "klaar" of "niet meer nodig". 
+
+Enkel met de opmerking bovenaan over de "game variables" was ik om te beginnen niet akkoord. Ik had hier eerst niet echt aandacht voor, dit was namelijk letterlijk overgenomen uit de tutorial, niet mijn fout dus, toch? Bij de volgende keren de feedback lezen om rustig te kunnen reflecteren, weg van het scherm en niet gewoon te reageren bleef dat zinnetje echter wel een beetje een door in het oog. Het voelde "oneerlijk", maar dat ben je gewoon na 9 jaar defensie, waarom trek ik me dit aan?
+Uiteindelijk bleek dit dan ook mijn favoriet gedeelte uit de feedback, doordat het me aanzet tot nadenken: Waarom neem je dit persoonlijk, je hebt het toch maar gewoon overgenomen?
+Dit deed me beseffen dat ik liever een fout maak dan zoeken naar excuses om achter te schuilen, ik had ook een tweede maal kunnen nadenken en tot de conclusie komen dat het "game variables" noemen wanneer je bezig bent met de variables van een game, dit inderdaad gewoon overbodig is. 
+Niemand heeft mij gedwongen tot het letterlijk overnemen, waarom ben je dan niet iets kritischer? Blijf zelf nadenken en werk verder met aangeboden middelen maar durf deze ook te verbeteren.
+Iets waarvan ik dacht dat het me van nature lukt, bleek toch iets waar ik bewuster bij stil moet staan. 
+In m'n huidige job, zeker in groepsverbanden, nemen we ook altijd kritiek op als een collectief werkpunt onder het motto "de ketting is maar zo sterk als de zwakste schakel". Bij een individueel project als dit, waar je zaken overneemt van iemand anders is het uiteindelijk net zo goed iets waar die collectieve team-player mindset nodig is. 
+Hoe kan ik toekomstig externe bronnen (Google, YouTube, AI?,...) het beste gebruiken om een zo goed mogelijk resultaat te bekomen.
+Deze denkoefeningen, het besef, de reminder "voetjes op de grond" en durf je eigen grootste criticus te zijn.
+Een mentale les die ik goud waard vindt, ontstaan uit een klein detail dat ik initieel wou negeren.
