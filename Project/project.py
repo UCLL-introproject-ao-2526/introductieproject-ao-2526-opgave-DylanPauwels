@@ -21,8 +21,29 @@ font = pygame.font.Font('freesansbold.ttf', 44)
 smaller_font = pygame.font.Font('freesansbold.ttf', 36)
 active = False
 cached_scaled_surface = None # [DN] waarom begint deze met een _ ?
+
 button_Y_coordinate = 820
 button_height = 50
+
+CARD_WIDTH = 120
+CARD_HEIGHT = 220
+CARD_X_OFFSET = 70
+CARD_Y_OFFSET_PLAYER = 460
+CARD_Y_OFFSET_DEALER = 160
+CARD_SPACING_X = 70
+CARD_SPACING_Y = 5
+
+TEXT_LEFT_X = 5
+TEXT_RIGHT_X = 80
+TEXT_TOP_Y = 5
+TEXT_BOTTOM_Y = 175
+
+BORDER_RADIUS = 5
+BORDER_WIDTH = 3
+CARD_COLOR = 'white'
+BORDER_COLOR = 'grey20'
+TEXT_COLOR = 'black'
+
 
 # win, loss, draw/push
 records = [0, 0, 0]
@@ -88,7 +109,7 @@ def confirm_place_bet():
         stake_reserved = int(current_bet)
         bankroll -= stake_reserved      # reserve stake from bankroll
         bet_locked = True
-        current_bet = 0                 # clear UI bet now that it's reserved [DN] vreemd dat je begint over de UI hier, dit lijkt code over het spel. Architectuur is normaalgezien dat UI alles ziet, maar de 'echte' functionaliteit niet weet dat ui bestaat. Dit is 2de jaars kennis, mvvm gewoon dat je weet dat het bestaat
+        current_bet = 0                 # clear bet now that it's reserved [DN] vreemd dat je begint over de UI hier, dit lijkt code over het spel. Architectuur is normaalgezien dat UI alles ziet, maar de 'echte' functionaliteit niet weet dat ui bestaat. Dit is 2de jaars kennis, mvvm gewoon dat je weet dat het bestaat
         
         return True
     
@@ -185,32 +206,35 @@ def draw_scores(player, dealer):
         logical_surface.blit(font.render(f'Score[{dealer}]', True, 'white'), (350, 100))
 
 
-# draw cards visually onto screen
 def draw_cards(player, dealer, reveal):
-    # [DN] zelfde remark, ik denk dat je heel veel herhaling hebt die je minstens in variabelen kunt steken, 
-    for i in range(len(player)):
-        pygame.draw.rect(logical_surface, 'white', [70 + (70 * i), 460 + (5 * i), 120, 220], 0, 5)
-        logical_surface.blit(font.render(player[i], True, 'black'), (75 + 70 * i, 465 + 5 * i))
-        logical_surface.blit(font.render(player[i], True, 'black'), (75 + 70 * i, 635 + 5 * i))
-        logical_surface.blit(font.render(player[i], True, 'black'), (150 + 70 * i, 465 + 5 * i))
-        logical_surface.blit(font.render(player[i], True, 'black'), (150 + 70 * i, 635 + 5 * i))
-        pygame.draw.rect(logical_surface, 'grey20', [70 + (70 * i), 460 + (5 * i), 120, 220], 3, 5)
+     # [DN] zelfde remark, ik denk dat je heel veel herhaling hebt die je minstens in variabelen kunt steken, 
+    for i, card in enumerate(player):
+        x = CARD_X_OFFSET + CARD_SPACING_X * i
+        y = CARD_Y_OFFSET_PLAYER + CARD_SPACING_Y * i
 
-    # if player hasn't finished turn, dealer will hide one card
-    for i in range(len(dealer)):
-        pygame.draw.rect(logical_surface, 'white', [70 + (70 * i), 160 + (5 * i), 120, 220], 0, 5)
-        if i != 0 or reveal:
-            logical_surface.blit(font.render(dealer[i], True, 'black'), (75 + 70 * i, 165 + 5 * i))
-            logical_surface.blit(font.render(dealer[i], True, 'black'), (75 + 70 * i, 335 + 5 * i))
-            logical_surface.blit(font.render(dealer[i], True, 'black'), (150 + 70 * i, 165 + 5 * i))
-            logical_surface.blit(font.render(dealer[i], True, 'black'), (150 + 70 * i, 335 + 5 * i))
-        else:
-            logical_surface.blit(font.render('???', True, 'black'), (75 + 70 * i, 165 + 5 * i))
-            logical_surface.blit(font.render('???', True, 'black'), (75 + 70 * i, 335 + 5 * i))
-            logical_surface.blit(font.render(dealer[i], True, 'black'), (150 + 70 * i, 165 + 5 * i))
-            logical_surface.blit(font.render(dealer[i], True, 'black'), (150 + 70 * i, 335 + 5 * i))
-        pygame.draw.rect(logical_surface, 'grey20', [70 + (70 * i), 160 + (5 * i), 120, 220], 3, 5)
+        pygame.draw.rect(logical_surface, CARD_COLOR, (x, y, CARD_WIDTH, CARD_HEIGHT), 0, BORDER_RADIUS)
 
+        logical_surface.blit(font.render(card, True, TEXT_COLOR), (x + TEXT_LEFT_X, y + TEXT_TOP_Y))
+        logical_surface.blit(font.render(card, True, TEXT_COLOR), (x + TEXT_LEFT_X, y + TEXT_BOTTOM_Y))
+        logical_surface.blit(font.render(card, True, TEXT_COLOR), (x + TEXT_RIGHT_X, y + TEXT_TOP_Y))
+        logical_surface.blit(font.render(card, True, TEXT_COLOR), (x + TEXT_RIGHT_X, y + TEXT_BOTTOM_Y))
+
+        pygame.draw.rect(logical_surface, BORDER_COLOR, (x, y, CARD_WIDTH, CARD_HEIGHT), BORDER_WIDTH, BORDER_RADIUS)
+
+    for i, card in enumerate(dealer):
+        x = CARD_X_OFFSET + CARD_SPACING_X * i
+        y = CARD_Y_OFFSET_DEALER + CARD_SPACING_Y * i
+
+        pygame.draw.rect(logical_surface, CARD_COLOR, (x, y, CARD_WIDTH, CARD_HEIGHT), 0, BORDER_RADIUS)
+
+        display = card if i != 0 or reveal else '???'
+
+        logical_surface.blit(font.render(display, True, TEXT_COLOR), (x + TEXT_LEFT_X, y + TEXT_TOP_Y))
+        logical_surface.blit(font.render(display, True, TEXT_COLOR), (x + TEXT_LEFT_X, y + TEXT_BOTTOM_Y))
+        logical_surface.blit(font.render(card, True, TEXT_COLOR), (x + TEXT_RIGHT_X, y + TEXT_TOP_Y))
+        logical_surface.blit(font.render(card, True, TEXT_COLOR), (x + TEXT_RIGHT_X, y + TEXT_BOTTOM_Y))
+
+        pygame.draw.rect(logical_surface, BORDER_COLOR, (x, y, CARD_WIDTH, CARD_HEIGHT), BORDER_WIDTH, BORDER_RADIUS)
 
 # pass in player or dealer hand and get best score possible
 def calculate_score(hand):
