@@ -498,9 +498,6 @@ while run:
                             round_resolved = False
 
 
-
-
-
         # if player busts, automatically end turn - treat like a stand
         if hand_active and player_score >= 21:
             hand_active = False
