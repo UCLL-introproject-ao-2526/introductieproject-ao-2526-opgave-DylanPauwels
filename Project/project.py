@@ -6,7 +6,7 @@ import traceback
 import time
 
 pygame.init()
-# game variables [DN] dit is geen nuttige comment, het is een game, dus je zegt 'variables' iedereen kan dat zien door de code te lezen. 
+#variables [DN] dit is geen nuttige comment, het is een game, dus je zegt 'variables' iedereen kan dat zien door de code te lezen. 
 cards = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
 one_deck = 4 * cards
 decks = 4
@@ -20,7 +20,9 @@ timer = pygame.time.Clock()
 font = pygame.font.Font('freesansbold.ttf', 44)
 smaller_font = pygame.font.Font('freesansbold.ttf', 36)
 active = False
-_cached_scaled_surface = None # [DN] waarom begint deze met een _ ?
+cached_scaled_surface = None # [DN] waarom begint deze met een _ ?
+button_Y_coordinate = 820
+button_height = 50
 
 # win, loss, draw/push
 records = [0, 0, 0]
@@ -60,38 +62,24 @@ MIN_BET = 10
 MAX_BET = 10000
 
 chip_buttons = { # [DN] je kan dit korter schrijven, de x coordinate is altijd + 85, de rest blijft hetzelfde. Gebruik ofwel een loop, of gebruik vriabelen voor 820 of 50. Zo moet je het maar op 1 plek aanpassen als je het later moet veranderen
-    10: pygame.Rect(50, 820, 80, 50),
-    50: pygame.Rect(135, 820, 80, 50),
-    100: pygame.Rect(220, 820, 100, 50),
-    500: pygame.Rect(325, 820, 100, 50),
+    10: pygame.Rect(50, button_Y_coordinate, 80, button_height),
+    50: pygame.Rect(135, button_Y_coordinate, 80, button_height),
+    100: pygame.Rect(220, button_Y_coordinate, 100, button_height),
+    500: pygame.Rect(325, button_Y_coordinate, 100, button_height),
 }
 
-clear_button = pygame.Rect(430, 820, 150, 50)
-all_in_button = pygame.Rect(585, 820, 140, 50)
-placebet_button = pygame.Rect(730, 820, 220, 50)
+clear_button = pygame.Rect(430, button_Y_coordinate, 150, button_height)
+all_in_button = pygame.Rect(585, button_Y_coordinate, 140, button_height)
+placebet_button = pygame.Rect(730, button_Y_coordinate, 220, button_height)
 
-# simple in game log buffer
-DEBUG_LINES = []
-def dbg(message):
-    try:
-        print(message)
-    except Exception:
-        pass
-    DEBUG_LINES.append(str(message))
-    if len(DEBUG_LINES) > 10:
-        DEBUG_LINES.pop(0)    
-
-## helper functions        
 
 # betting functions
 def change_bet(amount):
     global current_bet, bankroll  # [DN] niet zeker waarom je hier global gebruikt, maar ook veel variabelen bovenaan declareert. Maakt niet zoveel uit wat je kiest, het belangrijkste is 
     if bet_locked:
         return
-    new_bet = current_bet + amount # [DN] deze 4 regels
-    new_bet = max(0, new_bet) # [DN] mogen gerust
-    new_bet = min(bankroll, new_bet) # [DN] op een lijn
-    current_bet = new_bet # [DN] schermen zijn breed
+    current_bet = min(bankroll, max(0, current_bet + amount))
+
 
 def confirm_place_bet():
     global bankroll, current_bet, stake_reserved, bet_locked
@@ -101,9 +89,9 @@ def confirm_place_bet():
         bankroll -= stake_reserved      # reserve stake from bankroll
         bet_locked = True
         current_bet = 0                 # clear UI bet now that it's reserved [DN] vreemd dat je begint over de UI hier, dit lijkt code over het spel. Architectuur is normaalgezien dat UI alles ziet, maar de 'echte' functionaliteit niet weet dat ui bestaat. Dit is 2de jaars kennis, mvvm gewoon dat je weet dat het bestaat
-        dbg(f"Place OK -> bankroll={bankroll} stake_reserved={stake_reserved} bet_locked={bet_locked}")
+        
         return True
-    dbg(f"Place FAIL -> bankroll={bankroll} stake_reserved={stake_reserved} bet_locked={bet_locked}")
+    
     return False
 
 
@@ -127,30 +115,22 @@ def payout(result):
     if stake_reserved <= 0:
         bet_locked = False
         stake_reserved = 0
-        dbg(f"Payout skipped -> bankroll={bankroll} stake_reserved={stake_reserved} bet_locked={bet_locked}")
         return
     stake = int(stake_reserved)
-    dbg(f"Payout start -> bankroll={bankroll} stake_reserved={stake_reserved} bet_locked={bet_locked} result={result}")
     #result values: 1-bust, 2-win, 3-loss, 4-push, 5-blackjack
     if result == OUT_WIN:
         bankroll += stake * 2 #player win -> bet x2
-        dbg(f" PAYOUT : normal win -> bankroll={bankroll} stake_reserved={stake_reserved} bet_locked={bet_locked}")
     elif result == OUT_BLACKJACK:
         bankroll += int(stake * 2.5) #blackjack payout 3:2
-        dbg(f" PAYOUT : blackjack win -> bankroll={bankroll} stake_reserved={stake_reserved} bet_locked={bet_locked}")
     elif result == OUT_PUSH:
         bankroll += stake    #push, return bet
-        dbg(f" PAYOUT : push -> bankroll={bankroll} stake_reserved={stake_reserved} bet_locked={bet_locked}")
     else:
-        # [DN] je mag gerust een function dbgMoney() maken die dit dbg()'d. Dan heb je niet al die argumenten continue in je gezicht. Ik vind moeilijk de code te zien die iets doet
-        dbg(f" PAYOUT : loss -> bankroll={bankroll} stake_reserved={stake_reserved} bet_locked={bet_locked}")    
-    #reset bet
-    stake_reserved = 0
+       
+        stake_reserved = 0
     bet_locked = False    
-    dbg(f"Payout end -> bankroll={bankroll} stake_reserved={stake_reserved} bet_locked={bet_locked}")
+
 
 def resolve_round():
-    dbg(f" Resolve start -> my_hand={my_hand} dealer_hand={dealer_hand}")
     global outcome, dealer_score, player_score, hand_active, reveal_dealer
     player_score = calculate_score(my_hand)
     dealer_score = calculate_score(dealer_hand)
@@ -167,14 +147,14 @@ def resolve_round():
         outcome = OUT_WIN
     else:
         outcome = OUT_LOSS
-    dbg(f" Resolve outcome -> player_score={player_score} dealer_score={dealer_score} outcome={outcome}")
+    
     payout(outcome)
-    dbg(f"after payout -> bankroll={bankroll} stake_reserved={stake_reserved} bet_locked={bet_locked}")    
+   
 
     #freeze hand state
     hand_active = False 
     reveal_dealer = True
-    dbg(f" Resolve end -> outcome={outcome} my_hand={my_hand} dealer_hand={dealer_hand}")
+    
 
 # get scale factors for logical to screen size conversion
 def screen_to_logical(pos):
@@ -365,8 +345,6 @@ while run:
         timer.tick(fps)
         logical_surface.fill('grey45')
 
-        # FRAME heartbeat (insert immediately after logical_surface.fill(...))
-        dbg(f"FRAME -> active={active} bankroll={bankroll} stake_reserved={stake_reserved} bet_locked={bet_locked}")
         
         # check bankroll, if 0 disable game start
         if not active and bankroll <= 0 and not bet_locked and (stake_reserved <= 0):
@@ -394,7 +372,6 @@ while run:
             if player_score == 21 and len(my_hand) == 2:
                 reveal_dealer = True
                 hand_active = False
-                dbg(" Player has blackjack on initial deal, revealing dealer")
                 resolve_round()
                 round_resolved = True
         # once game is activated, and dealt, calculate scores and display cards
@@ -412,7 +389,6 @@ while run:
                     dealer_hand, game_deck = deal_cards(dealer_hand, game_deck)
                 else:
                     if not round_resolved and not hand_active:
-                        dbg(" Dealer finished, resolving round")
                         resolve_round()
                         round_resolved = True
 
@@ -497,7 +473,7 @@ while run:
 
                             round_resolved = False
 
-                            dbg(f"New Hand -> bankroll={bankroll} stake_reserved={stake_reserved} bet_locked={bet_locked}")
+
 
 
 
