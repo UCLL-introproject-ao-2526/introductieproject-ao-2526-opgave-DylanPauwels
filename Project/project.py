@@ -534,14 +534,6 @@ while run:
             y += 24    
         logical_surface.blit(smaller_font.render("See console for full traceback.", True, 'red'), (20, y + 8))    
 
-        dx = 20
-        dy = 20
-        for line in DEBUG_LINES:
-            try:
-                logical_surface.blit(smaller_font.render(line[:120], True, 'yellow'), (WIDTH - 400 + dx, dy))
-            except Exception:
-                pass
-            dy += 18
         pygame.display.update()
 
         while True:
